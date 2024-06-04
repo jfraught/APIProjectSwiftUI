@@ -33,7 +33,6 @@ struct DogRowView: View {
 }
 
 struct DogView: View {
-
     @StateObject var viewModel: ViewModel
     
     init(viewModel: DogView.ViewModel) {

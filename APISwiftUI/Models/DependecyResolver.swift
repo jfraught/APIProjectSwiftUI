@@ -16,14 +16,32 @@ struct DogImageURL: Codable {
     }
 }
 
+struct Rep: Codable, Hashable {
+    var name: String
+    var party: String
+    var link: URL
+}
+
+struct RepSearchResponse: Codable {
+    let results: [Rep]
+}
+
 protocol DogImageFetching {
     func fetchDogPhoto(from url: URL) async throws -> Image
     func fetchDogInfo() async throws -> DogImageURL
     func getDogImage() async throws -> Image 
 }
 
+protocol RepFetching {
+    func fetchReps(matching query: [String: String]) async throws -> [Rep]
+}
+
 protocol DogImageResolving {
     func resolveDogImageFetching() -> DogImageFetching
+}
+
+protocol RepResolving {
+    func resolveRepFetching() -> RepFetching
 }
 
 class DogImageFetcher: DogImageFetching {
@@ -79,7 +97,38 @@ class DogImageFetcher: DogImageFetching {
     }
 }
 
-class ExternalDependencyResolver: DogImageResolving {
+class RepFetcher: RepFetching {
+    enum RepControllerError: Error, LocalizedError {
+        case repNotFound
+    }
+    
+    func fetchReps(matching query: [String: String]) async throws -> [Rep] {
+        var urlComponents = URLComponents(string: "https://whoismyrepresentative.com/getall_mems.php")!
+        urlComponents.queryItems = query.map {
+            URLQueryItem(name: $0.key, value: $0.value)
+        }
+        
+        urlComponents.queryItems?.append(URLQueryItem(name: "output", value: "json"))
+        
+        let (data, response) = try await URLSession.shared.data(from: urlComponents.url!)
+    
+        guard
+            let httpResponse = response as? HTTPURLResponse,
+            httpResponse.statusCode == 200 else {
+            throw RepControllerError.repNotFound
+        }
+        
+        let jsonDecoder = JSONDecoder()
+        let searchResponse = try jsonDecoder.decode(RepSearchResponse.self, from: data)
+        return searchResponse.results
+    }
+}
+
+class ExternalDependencyResolver: DogImageResolving, RepResolving {
+    func resolveRepFetching() -> any RepFetching {
+        RepFetcher()
+    }
+    
     func resolveDogImageFetching() -> any DogImageFetching {
         DogImageFetcher()
     }
