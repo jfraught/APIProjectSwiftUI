@@ -8,17 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+    typealias Dependencies = DogImageResolving
+    @StateObject var dogViewModel: DogView.ViewModel
+    
+    init(resolver: Dependencies) {
+        _dogViewModel = .init(wrappedValue: .init(dogFetcher: resolver.resolveDogImageFetching()))
     }
-}
-
-#Preview {
-    ContentView()
+    
+    var body: some View {
+        TabView {
+            DogView(viewModel: dogViewModel)
+                .tabItem {
+                    Label("Dogs", systemImage: "dog")
+                }
+        }
+    }
 }

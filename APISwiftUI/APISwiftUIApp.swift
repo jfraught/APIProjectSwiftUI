@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct APISwiftUIApp: App {
+    let externalResolver = ExternalDependencyResolver()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(resolver: externalResolver)
         }
     }
 }
