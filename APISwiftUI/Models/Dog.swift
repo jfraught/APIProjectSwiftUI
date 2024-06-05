@@ -10,7 +10,7 @@ import SwiftUI
 
 struct Dog: Hashable {
     let dogImage: Image
-    let dogName: String
+    var dogName: String
     let id = UUID()
     
     func hash(into hasher: inout Hasher) {

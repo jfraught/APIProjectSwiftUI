@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct DogDetailView: View {
-    var dog: Dog
+    @Binding var dog: Dog
     
     var body: some View {
         VStack {
             dog.dogImage
-            Text(dog.dogName)
+            TextField(dog.dogName, text: $dog.dogName)
         }
+        .padding()
     }
 }
 
@@ -67,20 +68,19 @@ struct DogView: View {
                 }
                 
                 if !viewModel.dogs.isEmpty {
-                    
                     List {
                         ForEach(viewModel.dogs, id: \.self) { dog in
-                            NavigationLink(value: dog) {
+                            NavigationLink(value: dog.id) {
                                 DogRowView(dog: dog)
-                            }
-                            .navigationDestination(for: Dog.self) { dog in
-                                DogDetailView(dog: dog)
                             }
                         }
                     }
                 }
             }
             .navigationTitle("Dogs")
+            .navigationDestination(for: UUID.self) { id in
+                DogDetailView(dog: $viewModel[id])
+            }
         }
     }
 }
@@ -96,6 +96,15 @@ extension DogView {
         
         init(dogFetcher: DogImageFetching) {
             self.dogFetcher = dogFetcher
+        }
+        
+        subscript(id: UUID) -> Dog {
+            get {
+                dogs.first { $0.id == id } ?? Dog(dogImage: Image(systemName: "exclamationmark.triangle"), dogName: "No dog")
+            } 
+            set {
+                dogs = dogs.map { $0.id == id ? newValue : $0 }
+            }
         }
         
         func loadNewImage() {

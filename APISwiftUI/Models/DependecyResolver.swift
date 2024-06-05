@@ -26,6 +26,30 @@ struct RepSearchResponse: Codable {
     let results: [Rep]
 }
 
+struct Laureate: Codable, Hashable {
+    var firstname: String
+    var surname: String
+}
+
+struct Category: Codable, Hashable {
+    var year: String
+    var category: String
+    var laureates: [Laureate]
+    
+    static func == (lhs: Category, rhs: Category) -> Bool {
+        lhs.category == rhs.category
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(year)
+        hasher.combine(category)
+    }
+}
+
+struct Prizes: Codable {
+    var prizes: [Category]
+}
+
 protocol DogImageFetching {
     func fetchDogPhoto(from url: URL) async throws -> Image
     func fetchDogInfo() async throws -> DogImageURL
@@ -36,12 +60,20 @@ protocol RepFetching {
     func fetchReps(matching query: [String: String]) async throws -> [Rep]
 }
 
+protocol PrizeFetching {
+    func fetchPrizes(matching query: [String: String]) async throws -> Prizes
+}
+
 protocol DogImageResolving {
     func resolveDogImageFetching() -> DogImageFetching
 }
 
 protocol RepResolving {
     func resolveRepFetching() -> RepFetching
+}
+
+protocol PrizeResolving {
+    func resolvePrizeFetching() -> PrizeFetching
 }
 
 class DogImageFetcher: DogImageFetching {
@@ -124,12 +156,42 @@ class RepFetcher: RepFetching {
     }
 }
 
-class ExternalDependencyResolver: DogImageResolving, RepResolving {
+class PrizeFetcher: PrizeFetching {
+    enum PrizeError: Error, LocalizedError {
+        case PrizesNotFound
+    }
+    
+    func fetchPrizes(matching query: [String : String]) async throws -> Prizes {
+        var urlComponents = URLComponents(string: "https://api.nobelprize.org/v1/prize.json")!
+        urlComponents.queryItems = query.map {
+            URLQueryItem(name: $0.key, value: $0.value)
+        }
+        
+        let (data, response) = try await URLSession.shared.data(from: urlComponents.url!)
+        
+        guard
+            let httpResonse = response as? HTTPURLResponse,
+            httpResonse.statusCode == 200 else {
+            throw PrizeError.PrizesNotFound
+        }
+        
+        let jsonDecoder = JSONDecoder()
+        let searchResponse = try jsonDecoder.decode(Prizes.self, from: data)
+        
+        return searchResponse
+    }
+}
+
+class ExternalDependencyResolver: DogImageResolving, RepResolving, PrizeResolving {
     func resolveRepFetching() -> any RepFetching {
         RepFetcher()
     }
     
     func resolveDogImageFetching() -> any DogImageFetching {
         DogImageFetcher()
+    }
+    
+    func resolvePrizeFetching() -> any PrizeFetching {
+        PrizeFetcher()
     }
 }

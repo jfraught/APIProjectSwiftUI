@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A95A3B172C0FBB250051A75D /* NobelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95A3B162C0FBB250051A75D /* NobelView.swift */; };
 		A984E9FA2C0F4FC300AF0B81 /* APISwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A984E9F92C0F4FC300AF0B81 /* APISwiftUIApp.swift */; };
 		A984E9FC2C0F4FC300AF0B81 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A984E9FB2C0F4FC300AF0B81 /* ContentView.swift */; };
 		A984E9FE2C0F4FC400AF0B81 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A984E9FD2C0F4FC400AF0B81 /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A95A3B162C0FBB250051A75D /* NobelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NobelView.swift; sourceTree = "<group>"; };
 		A984E9F62C0F4FC300AF0B81 /* APISwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APISwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A984E9F92C0F4FC300AF0B81 /* APISwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISwiftUIApp.swift; sourceTree = "<group>"; };
 		A984E9FB2C0F4FC300AF0B81 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -80,8 +82,9 @@
 			isa = PBXGroup;
 			children = (
 				A984E9FB2C0F4FC300AF0B81 /* ContentView.swift */,
-				A984EA122C0F982800AF0B81 /* RepView.swift */,
 				A984EA102C0F933100AF0B81 /* DogView.swift */,
+				A95A3B162C0FBB250051A75D /* NobelView.swift */,
+				A984EA122C0F982800AF0B81 /* RepView.swift */,
 			);
 			name = "Views - ViewModels";
 			sourceTree = "<group>";
@@ -167,6 +170,7 @@
 			files = (
 				A984EA0D2C0F51AB00AF0B81 /* DependecyResolver.swift in Sources */,
 				A984EA112C0F933100AF0B81 /* DogView.swift in Sources */,
+				A95A3B172C0FBB250051A75D /* NobelView.swift in Sources */,
 				A984EA132C0F982800AF0B81 /* RepView.swift in Sources */,
 				A984E9FC2C0F4FC300AF0B81 /* ContentView.swift in Sources */,
 				A984EA0F2C0F5A4D00AF0B81 /* Dog.swift in Sources */,
